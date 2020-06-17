@@ -8,7 +8,11 @@ function App() {
   const [repositories, setRepositories] = useState([]);
 
   useEffect(() => {
-    loadRepositories();
+    (async function () {
+      const response = await api.get("/repositories");
+
+      setRepositories(response.data);
+    })();
   }, []);
 
   async function loadRepositories() {
@@ -30,7 +34,11 @@ function App() {
 
   async function handleRemoveRepository(id) {
     await api.delete(`/repositories/${id}`);
-    await loadRepositories();
+
+    const filteredRepository = repositories.filter(
+      (repository) => repository.id !== id
+    );
+    setRepositories(filteredRepository);
   }
 
   return (
